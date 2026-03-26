@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Sistem Nilai Mahasiswa</title>
+
+<style>
+
+body{
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f172a, #1e3a8a);
+    color:white;
+    margin:0;
+}
+
+.dashboard{
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+.start-btn{
+    padding:12px 30px;
+    background:#38bdf8;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.container{
+    display:none;
+    background:#1e293b;
+    padding:30px;
+    border-radius:15px;
+    width:700px;
+    margin:40px auto;
+}
+
+input{
+    width:90%;
+    padding:10px;
+    margin:8px;
+    border-radius:5px;
+    border:none;
+}
+
+button{
+    padding:10px 20px;
+    background:#22c55e;
+    border:none;
+    border-radius:5px;
+    cursor:pointer;
+}
+
+table{
+    margin-top:20px;
+    width:100%;
+    border-collapse:collapse;
+}
+
+th, td{
+    border:1px solid white;
+    padding:10px;
+}
+
+th{
+    background:#334155;
+}
+
+.lulus{color:#22c55e;}
+.tidak{color:#ef4444;}
+
+</style>
+
+</head>
+<body>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+<h1>🎓 Sistem Nilai Mahasiswa</h1>
+<button class="start-btn" onclick="mulai()">Masuk Sistem</button>
+</div>
+
+<!-- APP -->
+<div class="container" id="app">
+
+<h2>📊 Data Nilai Mahasiswa</h2>
+
+<input type="text" id="nim" placeholder="Masukkan NIM">
+<input type="text" id="nama" placeholder="Masukkan Nama">
+
+<input type="number" id="tugas" placeholder="Nilai Tugas">
+<input type="number" id="uts" placeholder="Nilai UTS">
+<input type="number" id="uas" placeholder="Nilai UAS">
+
+<br>
+<button onclick="hitungNilai()">Tambah Data</button>
+<button onclick="kembali()">⬅ Kembali</button>
+
+<table>
+<tr>
+<th>NIM</th>
+<th>Nama</th>
+<th>Rata-rata</th>
+<th>Grade</th>
+<th>Status</th>
+<th>Aksi</th>
+</tr>
+
+<tbody id="hasil"></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+/* MASUK */
+function mulai(){
+document.getElementById("dashboard").style.display="none";
+document.getElementById("app").style.display="block";
+}
+
+/* KEMBALI */
+function kembali(){
+document.getElementById("dashboard").style.display="flex";
+document.getElementById("app").style.display="none";
+}
+
+/* TAMBAH DATA */
+function tambahData(nim, nama, tugas, uts, uas){
+
+let rata = (tugas + uts + uas) / 3;
+
+let grade="";
+if(rata>=85) grade="A";
+else if(rata>=75) grade="B";
+else if(rata>=65) grade="C";
+else if(rata>=50) grade="D";
+else grade="E";
+
+let status = rata>=65 ? "Lulus" : "Tidak Lulus";
+let warna = rata>=65 ? "lulus" : "tidak";
+
+document.getElementById("hasil").innerHTML += `
+<tr>
+<td>${nim}</td>
+<td>${nama}</td>
+<td>${rata.toFixed(2)}</td>
+<td>${grade}</td>
+<td class="${warna}">${status}</td>
+<td><button onclick="hapusBaris(this)">Hapus</button></td>
+</tr>
+`;
+}
+
+/* HITUNG INPUT */
+function hitungNilai(){
+
+let nim = document.getElementById("nim").value;
+let nama = document.getElementById("nama").value;
+let tugas = parseFloat(document.getElementById("tugas").value);
+let uts = parseFloat(document.getElementById("uts").value);
+let uas = parseFloat(document.getElementById("uas").value);
+
+if(!nim || !nama || isNaN(tugas) || isNaN(uts) || isNaN(uas)){
+alert("Isi semua data!");
+return;
+}
+
+tambahData(nim, nama, tugas, uts, uas);
+
+/* reset */
+document.getElementById("nim").value="";
+document.getElementById("nama").value="";
+document.getElementById("tugas").value="";
+document.getElementById("uts").value="";
+document.getElementById("uas").value="";
+}
+
+/* HAPUS */
+function hapusBaris(btn){
+btn.parentNode.parentNode.remove();
+}
+
+/* DATA OTOMATIS SAAT MASUK */
+function loadDataAwal(){
+tambahData("12450110246", "Irwansyah", 90, 85, 88);
+tambahData("12270513637", "Rian alviza", 75, 70, 80);
+tambahData("12440314049", "Reza novitra", 75, 65, 60);
+}
+
+/* PANGGIL SAAT MASUK */
+function mulai(){
+document.getElementById("dashboard").style.display="none";
+document.getElementById("app").style.display="block";
+
+/* load data hanya sekali */
+if(document.getElementById("hasil").innerHTML === ""){
+loadDataAwal();
+}
+}
+
+</script>
+
+</body>
+</html>
